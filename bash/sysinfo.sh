@@ -4,25 +4,26 @@
 fqdn=$(hostname --fqdn)
 
 #Get the operating system name and version
-os=$(hostnamectl)
+os=$(hostnamectl | grep "Operating System" | awk '{print $3,$4}')
 
 #Get the IP addresses that are not on the 127 network
-ipadd=$(hostname -I | grep -v "127.")
+ipadd=$(ip route | grep default | awk '{print $3}')
 
 #Get the amount of space available in only the root filesystem in human friendly
-rootfiles=$(df -h /)
+rootfiles=$(df -h /| awk '/\/$/ {print $4}')
 
 #Display the information
 
-cat << EOF
+cat << EOF  
+
+Report for myvm
+
+===============
 
 FQDN: $fqdn
+Operating System Name and Version: $os
+IP Address: $ipadd
+Root Filessystem Free Space: $rootfiles
 
-Host Information:
-$os
-
-IP Addresses: $ipadd
-
-Root Filessystem Available:
-$rootfiles
+================
 EOF
